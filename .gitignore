@@ -19,3 +19,4 @@ upload.sh
 changes.txt
 *.swp
 testdata*
+.idea/
