@@ -1,8 +1,9 @@
-#
-#   Request-reply service in Python
-#   Connects REP socket to tcp://localhost:5560
-#   Expects "Hello" from client, replies with "World"
-#
+"""
+Request-reply service in Python
+Connects REP socket to tcp://localhost:5560
+Expects "Hello" from client, replies with "World"
+"""
+
 import zmq
 
 
