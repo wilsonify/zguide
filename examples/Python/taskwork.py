@@ -1,36 +1,33 @@
-# Task worker
-# Connects PULL socket to tcp://localhost:5557
-# Collects workloads from ventilator via that socket
-# Connects PUSH socket to tcp://localhost:5558
-# Sends results to sink via that socket
-#
-# Author: Lev Givon <lev(at)columbia(dot)edu>
+"""
+Task worker
+Collect workload from ventilator
+Sends results to sink
+"""
 
-import sys
+import logging
 import time
+
 import zmq
 
 
-context = zmq.Context()
+def main():
+    context = zmq.Context()
+    logging.info("receive messages on 5557")
+    vent = context.socket(zmq.PULL)
+    vent.connect("tcp://localhost:5557")
 
-# Socket to receive messages on
-receiver = context.socket(zmq.PULL)
-receiver.connect("tcp://localhost:5557")
+    logging.info("send messages to 5558")
+    sink = context.socket(zmq.PUSH)
+    sink.connect("tcp://localhost:5558")
 
-# Socket to send messages to
-sender = context.socket(zmq.PUSH)
-sender.connect("tcp://localhost:5558")
+    while True:
+        print("waiting for message")
+        message_dict = vent.recv_json()
+        print(f"start message_dict={message_dict}")
+        time.sleep(message_dict['workload'])
+        print(f"done message_dict={message_dict}")
+        sink.send_json(message_dict)
 
-# Process tasks forever
-while True:
-    s = receiver.recv()
 
-    # Simple progress indicator for the viewer
-    sys.stdout.write('.')
-    sys.stdout.flush()
-
-    # Do the work
-    time.sleep(int(s)*0.001)
-
-    # Send results to sink
-    sender.send(b'')
+if __name__ == "__main__":
+    main()

@@ -1,35 +1,28 @@
-# Task sink
-# Binds PULL socket to tcp://localhost:5558
-# Collects results from workers via that socket
-#
-# Author: Lev Givon <lev(at)columbia(dot)edu>
+"""
+Task sink
+Collects results from workers
+"""
 
-import sys
-import time
+import logging
+
 import zmq
 
 
-context = zmq.Context()
+def main():
+    context = zmq.Context()
 
-# Socket to receive messages on
-receiver = context.socket(zmq.PULL)
-receiver.bind("tcp://*:5558")
+    logging.info("receive messages on 5558")
+    receiver = context.socket(zmq.PULL)
+    receiver.bind("tcp://*:5558")
 
-# Wait for start of batch
-s = receiver.recv()
-
-# Start our clock now
-tstart = time.time()
-
-# Process 100 confirmations
-for task_nbr in range(100):
+    logging.info("Wait for start of batch")
     s = receiver.recv()
-    if task_nbr % 10 == 0:
-        sys.stdout.write(':')
-    else:
-        sys.stdout.write('.')
-    sys.stdout.flush()
 
-# Calculate and report duration of batch
-tend = time.time()
-print("Total elapsed time: %d msec" % ((tend-tstart)*1000))
+    while True:
+        print("waiting for next message")
+        message_dict = receiver.recv_json()
+        print(f"message_dict={message_dict}")
+
+
+if __name__ == "__main__":
+    main()
