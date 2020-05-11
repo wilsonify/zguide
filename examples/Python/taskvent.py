@@ -22,6 +22,28 @@ def main():
         workload = random.randint(1, 5)
         message_dict = {
             "task_nbr": task_nbr,
+            "strategy": "strategy_one",
+            "workload": workload
+        }
+
+        sender.send_json(message_dict)
+        print(f"message_dict={message_dict}")
+    for task_nbr in range(10):
+        workload = random.randint(1, 5)
+        message_dict = {
+            "task_nbr": task_nbr,
+            "strategy": "strategy_two",
+            "workload": workload
+        }
+
+        sender.send_json(message_dict)
+        print(f"message_dict={message_dict}")
+
+    for task_nbr in range(10):
+        workload = random.randint(1, 5)
+        message_dict = {
+            "task_nbr": task_nbr,
+            "strategy": "strategy_three",
             "workload": workload
         }
 
