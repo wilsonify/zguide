@@ -6,10 +6,10 @@ Sends results to sink
 
 import logging
 import time
+import traceback
+from types import MethodType
 
 import zmq
-
-from types import MethodType
 
 
 class Strategy:
@@ -26,6 +26,7 @@ def strategy_one(self, payload):
     :param self:
     :return:
     """
+
     self.name = "Strategy One"
     time.sleep(payload['workload'])
     print("{} is used to execute method 1".format(self.name))
@@ -49,7 +50,7 @@ def strategy_three(self, payload):
     :return:
     """
     self.name = "Strategy Three"
-    time.sleep(payload['workload'])
+    time.sleep(payload['workloadasdf'])
     print("{} is used to execute method 2".format(self.name))
 
 
@@ -76,7 +77,9 @@ def main():
             sink.send_json(message_dict)
             print(f"done message_dict={message_dict}")
         except:
-            message_dict['result'] = 'failed'
+            exceptiondata = traceback.format_exc().splitlines()
+            exceptionarray = [exceptiondata[-1]] + exceptiondata[1:-1]
+            message_dict['result'] = exceptionarray
             sink.send_json(message_dict)
             print("failed")
 
